@@ -9,6 +9,7 @@ interface SetRowProps {
   onStatusChange?: (status: 'success' | 'failed') => void;
   onWeightChange?: (weight: number) => void;
   onRepsChange?: (reps: number) => void;
+  onRemove?: () => void;
   weightUnit?: 'lbs' | 'kg';
 }
 
@@ -19,6 +20,7 @@ export default function SetRow({
   onStatusChange,
   onWeightChange,
   onRepsChange,
+  onRemove,
   weightUnit = 'lbs'
 }: SetRowProps) {
   const [currentStatus, setCurrentStatus] = useState(status);
@@ -31,26 +33,26 @@ export default function SetRow({
   };
 
   return (
-    <div className="flex gap-3 items-center mb-3">
+    <div className="flex flex-nowrap gap-2 items-center mb-3">
       <input
         type="number"
-        className="w-28 p-3 border border-gray-300 rounded-lg text-center bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        className="w-24 p-2 border border-gray-300 rounded-lg text-center bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
         placeholder={defaultWeight?.toString() || "Weight"}
         defaultValue={defaultWeight}
         onChange={(e) => onWeightChange?.(Number(e.target.value))}
       />
-      <span className="text-gray-600">{weightUnit} ×</span>
+      <span className="text-gray-600 text-sm whitespace-nowrap">{weightUnit} ×</span>
       <input
         type="number"
-        className="w-24 p-3 border border-gray-300 rounded-lg text-center bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        className="w-20 p-2 border border-gray-300 rounded-lg text-center bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
         placeholder={defaultReps?.toString() || "Reps"}
         defaultValue={defaultReps}
         onChange={(e) => onRepsChange?.(Number(e.target.value))}
       />
-      <span className="text-gray-600">reps</span>
+      <span className="text-gray-600 text-sm whitespace-nowrap">reps</span>
       <button
         onClick={toggleStatus}
-        className={`px-4 py-2 rounded-full border text-sm transition-colors ${
+        className={`px-3 py-2 rounded-full border text-xs transition-colors flex-shrink-0 ${
           currentStatus === 'failed'
             ? 'bg-red-500 text-white border-red-500'
             : currentStatus === 'add'
@@ -60,6 +62,14 @@ export default function SetRow({
       >
         {currentStatus === 'failed' ? 'F' : currentStatus === 'add' ? 'Add' : '✓'}
       </button>
+      {onRemove && (
+        <button
+          onClick={onRemove}
+          className="px-2 py-2 rounded-full border border-red-300 text-red-500 text-xs hover:bg-red-50 transition-colors flex-shrink-0"
+        >
+          ×
+        </button>
+      )}
     </div>
   );
 }

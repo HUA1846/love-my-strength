@@ -21,7 +21,7 @@ interface ExerciseData {
   notes: string;
 }
 
-export default function Exercise({ name, isNew = false }: ExerciseProps) {
+export default function Exercise({ name, isNew = false, onRemove }: ExerciseProps) {
   const [exercise, setExercise] = useState<ExerciseData>({
     warmupSets: isNew ? [] : [{ weight: 95, reps: 5, status: 'success' }],
     workingSets: isNew ? [] : [
@@ -46,9 +46,33 @@ export default function Exercise({ name, isNew = false }: ExerciseProps) {
     }));
   };
 
+  const removeWarmupSet = (index: number) => {
+    setExercise(prev => ({
+      ...prev,
+      warmupSets: prev.warmupSets.filter((_, i) => i !== index)
+    }));
+  };
+
+  const removeWorkingSet = (index: number) => {
+    setExercise(prev => ({
+      ...prev,
+      workingSets: prev.workingSets.filter((_, i) => i !== index)
+    }));
+  };
+
   return (
     <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 mb-4">
-      <h3 className="text-lg font-semibold mb-4">{name}</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">{name}</h3>
+        {onRemove && (
+          <button
+            onClick={onRemove}
+            className="px-3 py-1 rounded-full border border-red-300 text-red-500 text-sm hover:bg-red-50 transition-colors"
+          >
+            Remove Exercise
+          </button>
+        )}
+      </div>
       
       {/* Warm-up sets */}
       {(!isNew || exercise.warmupSets.length > 0) && (
@@ -75,6 +99,7 @@ export default function Exercise({ name, isNew = false }: ExerciseProps) {
                 newWarmupSets[index].status = status;
                 setExercise({ ...exercise, warmupSets: newWarmupSets });
               }}
+              onRemove={() => removeWarmupSet(index)}
             />
           ))}
           <button
@@ -110,6 +135,7 @@ export default function Exercise({ name, isNew = false }: ExerciseProps) {
               newWorkingSets[index].status = status;
               setExercise({ ...exercise, workingSets: newWorkingSets });
             }}
+            onRemove={() => removeWorkingSet(index)}
           />
         ))}
         <button
